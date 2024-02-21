@@ -18,11 +18,13 @@ class PacketManager
 
 	Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>> _onRecv = new Dictionary<ushort, Action<PacketSession, ArraySegment<byte>, ushort>>();
 	Dictionary<ushort, Action<PacketSession, IMessage>> _handler = new Dictionary<ushort, Action<PacketSession, IMessage>>();
+
+	public Action<PacketSession, IMessage, ushort> CustomHandler { get; set; }
 		
 	public void Register()
 	{		
-		_onRecv.Add((ushort)MsgId.CChat, MakePacket<C_Chat>);
-		_handler.Add((ushort)MsgId.CChat, PacketHandler.C_ChatHandler);
+		_onRecv.Add((ushort)MsgId.CMove, MakePacket<C_Move>);
+		_handler.Add((ushort)MsgId.CMove, PacketHandler.C_MoveHandler);
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
@@ -43,9 +45,16 @@ class PacketManager
 	{
 		T pkt = new T();
 		pkt.MergeFrom(buffer.Array, buffer.Offset + 4, buffer.Count - 4);
-		Action<PacketSession, IMessage> action = null;
-		if (_handler.TryGetValue(id, out action))
-			action.Invoke(session, pkt);
+		if (CustomHandler != null)
+		{
+			CustomHandler.Invoke(session, pkt, id);
+		}
+		else // 서버인 경우
+		{
+		    Action<PacketSession, IMessage> action = null;
+		    if (_handler.TryGetValue(id, out action))
+		        action.Invoke(session, pkt);
+		}
 	}
 
 	public Action<PacketSession, IMessage> GetPacketHandler(ushort id)
