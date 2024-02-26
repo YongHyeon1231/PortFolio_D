@@ -15,6 +15,12 @@ public class MapEditor
     [MenuItem("Tools/GenerateMap %#g")]
     private static void GenerateMap()
     {
+        GenerateByPath("Assets/Resources/Map");
+        GenerateByPath("../Common/MapData");
+    }
+
+    private static void GenerateByPath(string pathPrefix)
+    {
         GameObject[] gameObjects = Resources.LoadAll<GameObject>("Prefabs/Map");
 
         foreach (GameObject go in gameObjects)
@@ -24,7 +30,7 @@ public class MapEditor
             /*if (tm == null)
                 return;*/
 
-            using (var writer = File.CreateText($"Assets/Resources/Map/{go.name}.txt"))
+            using (var writer = File.CreateText($"{pathPrefix}/{go.name}.txt"))
             {
                 writer.WriteLine(tmBase.cellBounds.xMin);
                 writer.WriteLine(tmBase.cellBounds.xMax);

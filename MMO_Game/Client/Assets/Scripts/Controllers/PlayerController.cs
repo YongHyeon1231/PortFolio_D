@@ -16,9 +16,11 @@ public class PlayerController : CreatureController
 
     protected override void UpdateAnimation()
     {
+        if (_animator == null || _sprite == null) return;
+
         if (State == CreatureState.Idle)
         {
-            switch (_lastDir)
+            switch (Dir)
             {
                 case MoveDir.Up:
                     _animator.Play("Idle_BACK");
@@ -64,7 +66,7 @@ public class PlayerController : CreatureController
         }
         else if (State == CreatureState.Skill)
         {
-            switch (_lastDir)
+            switch (Dir)
             {
                 case MoveDir.Up:
                     _animator.Play(_rangeSkill ? "ATTACK_WEAPON_BACK" : "ATTACK_BACK");
@@ -97,16 +99,6 @@ public class PlayerController : CreatureController
         base.UpdateController();
     }
 
-    protected override void UpdateIdle()
-    {
-        // 이동 상태로 갈지 확인
-        if (Dir != MoveDir.None)
-        {
-            State = CreatureState.Moving;
-            return;
-        }
-    }
-
     public void UseSkill(int skillId)
     {
         if (skillId == 1)
@@ -135,7 +127,7 @@ public class PlayerController : CreatureController
         // 피격 판정
         GameObject go = Managers.Resource.Instantiate("Creature/Arrow");
         ArrowController ac = go.GetComponent<ArrowController>();
-        ac.Dir = _lastDir;
+        ac.Dir = Dir;
         ac.CellPos = CellPos;
 
         // 대기 시간
