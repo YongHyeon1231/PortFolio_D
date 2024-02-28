@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Server.Data;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -201,31 +202,43 @@ namespace Server.Game
                 resSkillPacket.Info.SkillId = skillPacket.Info.SkillId;
                 Broadcast(resSkillPacket);
 
-                if (skillPacket.Info.SkillId == 1)
-                {
-                    // TODO : 데미지 판정
-                    Vector2Int skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
-                    GameObject target = Map.Find(skillPos);
-                    if (target != null)
-                    {
-                        Console.WriteLine("Hit GameObject !");
-                    }
-                }
-                else if (skillPacket.Info.SkillId == 2)
-                {
-                    // TODO : Arrow
-                    Arrow arrow = ObjectManager.Instance.Add<Arrow>();
-                    if (arrow == null)
-                        return;
+                Data.Skill skillData = null;
+                if (DataManager.SkillDict.TryGetValue(skillPacket.Info.SkillId, out skillData) == false)
+                    return;
 
-                    arrow.Owner = player;
-                    arrow.PosInfo.State = CreatureState.Moving;
-                    arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
-                    arrow.PosInfo.PosX = player.PosInfo.PosX;
-                    arrow.PosInfo.PosY = player.PosInfo.PosY;
-                    //타인에게 정보 전송
-                    EnterGame(arrow);
+                switch (skillData.skillType)
+                {
+                    case SkillType.SkillNone:
+                        break;
+                    case SkillType.SkillAuto:
+                        {
+                            // TODO : 데미지 판정
+                            Vector2Int skillPos = player.GetFrontCellPos(info.PosInfo.MoveDir);
+                            GameObject target = Map.Find(skillPos);
+                            if (target != null)
+                            {
+                                Console.WriteLine("Hit GameObject !");
+                            }
+                        }
+                        break;
+                    case SkillType.SkillProjectile:
+                        {
+                            // TODO : Arrow
+                            Arrow arrow = ObjectManager.Instance.Add<Arrow>();
+                            if (arrow == null)
+                                return;
 
+                            arrow.Owner = player;
+                            arrow.Data = skillData;
+
+                            arrow.PosInfo.State = CreatureState.Moving;
+                            arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
+                            arrow.PosInfo.PosX = player.PosInfo.PosX;
+                            arrow.PosInfo.PosY = player.PosInfo.PosY;
+                            //타인에게 정보 전송
+                            EnterGame(arrow);
+                        }
+                        break;
                 }
             }
         }
