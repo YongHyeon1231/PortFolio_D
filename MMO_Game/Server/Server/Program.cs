@@ -14,7 +14,7 @@ using ServerCore;
 
 namespace Server
 {
-	class Program
+    class Program
 	{
 		static Listener _listener = new Listener();
 
@@ -36,12 +36,12 @@ namespace Server
 			_listener.Init(endPoint, () => { return SessionManager.Instance.Generate(); });
 			Console.WriteLine("Listening...");
 
-			//FlushRoom();
-			JobTimer.Instance.Push(FlushRoom);
-
+			//TODO
 			while (true)
 			{
-				JobTimer.Instance.Flush();
+				RoomManager.Instance.Find(1).Update();
+
+				Thread.Sleep(100);
 			}
 		}
 	}

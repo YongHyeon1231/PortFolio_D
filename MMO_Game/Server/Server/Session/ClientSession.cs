@@ -12,7 +12,7 @@ using Server.Game;
 
 namespace Server
 {
-	public class ClientSession : PacketSession
+    public class ClientSession : PacketSession
 	{
 		public Player MyPlayer { get; set; }
 		public int SessionId { get; set; }
@@ -34,9 +34,9 @@ namespace Server
 		{
 			Console.WriteLine($"OnConnected : {endPoint}");
 
-			MyPlayer = PlayerManager.Instance.Add();
+			MyPlayer = ObjectManager.Instance.Add<Player>();
 			{
-				MyPlayer.Info.Name = $"Player_{MyPlayer.Info.PlayerId}";
+				MyPlayer.Info.Name = $"Player_{MyPlayer.Info.ObjectId}";
 				MyPlayer.Info.PosInfo.State = CreatureState.Idle;
 				MyPlayer.Info.PosInfo.MoveDir = MoveDir.Down;
 				MyPlayer.Info.PosInfo.PosX = 0;
@@ -55,7 +55,7 @@ namespace Server
 
 		public override void OnDisconnected(EndPoint endPoint)
 		{
-            RoomManager.Instance.Find(1).LeaveGame(MyPlayer.Info.PlayerId);
+            RoomManager.Instance.Find(1).LeaveGame(MyPlayer.Info.ObjectId);
 
             SessionManager.Instance.Remove(this);
 
