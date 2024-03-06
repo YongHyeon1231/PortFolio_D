@@ -30,6 +30,7 @@ public class ObjectManager
                 MyPlayer = go.GetComponent<MyPlayerController>();
                 MyPlayer.Id = info.ObjectId;
                 MyPlayer.PosInfo = info.PosInfo;
+                MyPlayer.Stat = info.StatInfo;
                 MyPlayer.SyncPos();
             }
             else
@@ -41,6 +42,7 @@ public class ObjectManager
                 PlayerController pc = go.GetComponent<PlayerController>();
                 pc.Id = info.ObjectId;
                 pc.PosInfo = info.PosInfo;
+                pc.Stat = info.StatInfo;
                 pc.SyncPos();
             }
         }
@@ -55,8 +57,8 @@ public class ObjectManager
             _objects.Add(info.ObjectId, go);
 
             ArrowController ac = go.GetComponent<ArrowController>();
-            ac.Dir = info.PosInfo.MoveDir;
-            ac.CellPos = new Vector3Int(info.PosInfo.PosX, info.PosInfo.PosY, 0);
+            ac.PosInfo = info.PosInfo;
+            ac.Stat = info.StatInfo;
             ac.SyncPos();
         }
     }
@@ -71,15 +73,6 @@ public class ObjectManager
         Managers.Resource.Destroy(go);
     }
 
-    public void RemoveMyPlayer()
-    {
-        if (MyPlayer == null)
-            return;
-
-        Remove(MyPlayer.Id);
-        MyPlayer = null;
-    }
-
     public GameObject FindById(int id)
     {
         GameObject go = null;
@@ -87,7 +80,7 @@ public class ObjectManager
         return go;
     }
 
-    public GameObject Find(Vector3Int cellPos)
+    public GameObject FindCreature(Vector3Int cellPos)
     {
         foreach (GameObject obj in _objects.Values)
         {
@@ -119,5 +112,6 @@ public class ObjectManager
         foreach (GameObject obj in _objects.Values)
             Managers.Resource.Destroy(obj);
         _objects.Clear();
+        MyPlayer = null;
     }
 }

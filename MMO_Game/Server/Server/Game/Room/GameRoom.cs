@@ -52,6 +52,9 @@ namespace Server.Game
                     _players.Add(gameObject.Id, player);
                     player.Room = this;
 
+                    // 플레이어를 위한 것
+                    Map.ApplyMove(player, new Vector2Int(player.CellPos.x, player.CellPos.y));
+
                     // 본인한테 정보 전송
                     {
                         S_EnterGame enterPacket = new S_EnterGame();
@@ -64,6 +67,17 @@ namespace Server.Game
                             if (player != p)
                                 spawnPacket.Objects.Add(p.Info);
                         }
+
+                        foreach (Monster m in _monsters.Values)
+                        {
+                            spawnPacket.Objects.Add(m.Info);
+                        }
+
+                        foreach (Projectile p in _projectiles.Values)
+                        {
+                            spawnPacket.Objects.Add(p.Info);
+                        }
+
                         player.Session.Send(spawnPacket);
                     }
                 }
@@ -72,6 +86,9 @@ namespace Server.Game
                     Monster monster = gameObject as Monster;
                     _monsters.Add(gameObject.Id, monster);
                     monster.Room = this;
+
+                    // 몬스터를 위한 것
+                    Map.ApplyMove(monster, new Vector2Int(monster.CellPos.x, monster.CellPos.y));
                 }
                 else if (type == GameObjectType.Projectile)
                 {
@@ -235,6 +252,7 @@ namespace Server.Game
                             arrow.PosInfo.MoveDir = player.PosInfo.MoveDir;
                             arrow.PosInfo.PosX = player.PosInfo.PosX;
                             arrow.PosInfo.PosY = player.PosInfo.PosY;
+                            arrow.Speed = skillData.projectile.speed;
                             //타인에게 정보 전송
                             EnterGame(arrow);
                         }
