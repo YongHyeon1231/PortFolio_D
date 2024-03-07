@@ -21,7 +21,13 @@ namespace Server.Game
         public float Speed
         {
             get { return Stat.Speed; }
-            set { Stat.Speed = value; }
+            set { Stat.Speed = Math.Clamp(value, 0, Stat.MaxHp); }
+        }
+
+        public int Hp
+        {
+            get { return Stat.Hp; }
+            set { Stat.Hp = value; }
         }
 
         public MoveDir Dir
