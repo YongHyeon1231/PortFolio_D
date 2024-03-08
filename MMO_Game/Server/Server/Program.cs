@@ -18,10 +18,17 @@ namespace Server
     class Program
 	{
 		static Listener _listener = new Listener();
+		static List<System.Timers.Timer> _timers = new List<System.Timers.Timer>();
 
-		static void FlushRoom()
+		static void TickRoom(GameRoom room, int tick = 100)
 		{
-			JobTimer.Instance.Push(FlushRoom, 250);
+			var timer = new System.Timers.Timer();
+			timer.Interval = tick;
+			timer.Elapsed += ((s, e) => { room.Update(); });
+			timer.AutoReset = true;
+			timer.Enabled = true;
+			
+			_timers.Add(timer);
 		}
 
 		static void Main(string[] args)
@@ -29,9 +36,8 @@ namespace Server
 			ConfigManager.LoadConfig();
 			DataManager.LoadData();
 
-			// var d = DataManager.StatDict;
-
-			RoomManager.Instance.Add(1);
+			GameRoom room = RoomManager.Instance.Add(1);
+			TickRoom(room, 50);
 
 			// DNS (Domain Name System)
 			string host = Dns.GetHostName();
@@ -45,9 +51,6 @@ namespace Server
 			//TODO
 			while (true)
 			{
-				GameRoom room = RoomManager.Instance.Find(1);
-				room.Push(room.Update);
-
 				Thread.Sleep(100);
 			}
 		}
