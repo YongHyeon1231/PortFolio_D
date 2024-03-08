@@ -86,6 +86,11 @@ namespace Server.Game
 
         public bool ApplyLeave(GameObject gameObject)
         {
+            if (gameObject.Room == null)
+                return false;
+            if (gameObject.Room.Map != this)
+                return false;
+
             PositionInfo posInfo = gameObject.PosInfo;
             if (posInfo.PosX < MinX || posInfo.PosX > MaxX) return false;
             if (posInfo.PosY < MinY || posInfo.PosY > MaxY) return false;
@@ -103,11 +108,15 @@ namespace Server.Game
 
         public bool ApplyMove(GameObject gameObject, Vector2Int dest)
         {
-            if (CanGo(dest, true) == false) return false;
-
             ApplyLeave(gameObject);
 
+            if (gameObject.Room == null)
+                return false;
+            if (gameObject.Room.Map != this)
+                return false;
+
             PositionInfo posInfo = gameObject.PosInfo;
+            if (CanGo(dest, true) == false) return false;
 
             // 목적지에 가기
             {
