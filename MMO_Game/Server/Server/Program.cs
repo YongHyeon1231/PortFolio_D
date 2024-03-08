@@ -29,7 +29,7 @@ namespace Server
 			ConfigManager.LoadConfig();
 			DataManager.LoadData();
 
-			var d = DataManager.StatDict;
+			// var d = DataManager.StatDict;
 
 			RoomManager.Instance.Add(1);
 

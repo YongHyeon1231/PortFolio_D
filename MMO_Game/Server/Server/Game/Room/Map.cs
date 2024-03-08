@@ -108,15 +108,18 @@ namespace Server.Game
 
         public bool ApplyMove(GameObject gameObject, Vector2Int dest)
         {
-            ApplyLeave(gameObject);
-
             if (gameObject.Room == null)
                 return false;
             if (gameObject.Room.Map != this)
                 return false;
 
-            PositionInfo posInfo = gameObject.PosInfo;
+            
             if (CanGo(dest, true) == false) return false;
+
+            // (순서조정) 나의 위치 체크와, 공간에서 사라지게 하고 하는게 다 ApplyLeave에 들어가있다.
+            ApplyLeave(gameObject);
+
+            PositionInfo posInfo = gameObject.PosInfo;
 
             // 목적지에 가기
             {

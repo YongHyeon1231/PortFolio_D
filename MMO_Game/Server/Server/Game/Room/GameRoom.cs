@@ -120,7 +120,6 @@ namespace Server.Game
         {
             GameObjectType type = ObjectManager.GetObjectTypeById(objectId);
 
-            
             if (type == GameObjectType.Player)
             {
                 Player player = null;
@@ -228,8 +227,8 @@ namespace Server.Game
 
             switch (skillData.skillType)
             {
-                case SkillType.SkillNone:
-                    break;
+                //case SkillType.SkillNone:
+                //    break;
                 case SkillType.SkillAuto:
                     {
                         // TODO : 데미지 판정
