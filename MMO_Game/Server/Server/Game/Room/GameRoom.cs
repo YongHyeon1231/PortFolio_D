@@ -27,15 +27,6 @@ namespace Server.Game
             Monster monster = ObjectManager.Instance.Add<Monster>();
             monster.CellPos = new Vector2Int(-10, 0);
             EnterGame(monster);
-
-            TestTimer();
-        }
-
-        // TEST
-        void TestTimer()
-        {
-            Console.WriteLine("TestTimer");
-            PushAfter(1000, TestTimer);
         }
 
         // 누군가 주기적으로 호출해줘야 한다
@@ -152,8 +143,8 @@ namespace Server.Game
                 if (_monsters.Remove(objectId, out monster) == false)
                     return;
 
-                monster.Room = null;
                 Map.ApplyLeave(monster);
+                monster.Room = null;
             }
             else if (type == GameObjectType.Projectile)
             {
